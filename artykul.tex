@@ -30,7 +30,55 @@
 
 \end{opening}
 
-Randomowy tekst.
+\section{What is a commitment scheme?}
+
+A commitment scheme is a cryptographic protocol that allows one (henceforth known as ,,Alice'') to make a
+permanent choice (\emph{commitment}), and provide a prove of this fact to other parties (henceforth known
+as ,,Bob''), without immediately revealing the choosen value, while at the same time making it possible 
+for Alice to reveal it later in such a way that Bob can verify it is indeed the value Alice has choosen 
+initially. Hence, there are two basic goals of a commitment scheme:
+
+\begin{itemize}
+  \item \emph{concealing} -- the proof must not provide Bob with information sufficient to determine the
+    choosen value. This is necessary to ensure safety of Alice -- secrecy of her choice.
+  \item \emph{binding} -- the proof must provide Bob with information sufficient to check if a particular
+    value is the value choosen by Alice. This is necessary to ensure safety of Bob -- simply speaking,
+    Alice must not be able to ,,cheat'', i.e. to make Bob believe she has choosen a value different than
+    the one she actually has.
+\end{itemize}
+
+Intuitively, there seems to be a tradeoff between these two properties -- on the one hand, empty proof
+is perfectly concealing, but does not bind Alice in any way, and revealing the full value is perfectly
+binding, while obviously not concealing.
+
+
+Usually, commitment schemes consist of two phases:
+
+\begin{itemize}
+  \item \emph{commitment phase} -- Alice chooses the value, and produces a proof for Bob
+  \item \emph{reveal phase} -- Alice reveals choosen value to Bob, who verifies it using his proof
+\end{itemize}
+
+As it turns out, commitment schemes constitute a rich and important branch of cryptography, with lots of
+applications both practical and theoretical, as building blocks for other protocols. One simple example,
+motivating the need for such device, and showing naturally arising problems it solves, is a game of 
+rock-paper-scissor. Two people form one of three shapes with their palm, and simultaneously display it
+to one another. Their choices determine the outcome -- one of them wins, or there is a draw. In the
+language of commitment schemes, used above, two people commit to one of 3 possible values, and then reveal
+their choice. It is vital that neither knows the choice of the other before he makes his own, otherwise
+he could always choose a winning shape, and inevitably win every time, rendering the game pointless.
+This illustrates the need for concealing -- the choice must be secret. In practice, this is ensured
+by forming the shape keeping the hand behind one's back. Furthermore, it must not be possible to change
+the value after commitment. Otherwise, after one of the players reveals his choice, the other could again
+switch to winning shape. In practice, players reveals their values simultaneously, thus in principle it
+should not be possible to cheat.
+
+Of course, someone with superhuman reflexes and perception could still manage to switch sufficiently 
+fast -- it's an inherent theoretical security flow. With a proper commitment scheme, there would be no
+such problem, as long as both players commit their choice before reveal phase.
+
+
+\section{Commitment schemes in modern cryptography}
 
 \nocite{*}
 
