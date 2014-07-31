@@ -14,7 +14,6 @@
 
 \usepackage{polski}
 \usepackage[polish]{babel}
-\selectlanguage{polish}
 
 
 \begin{document}
@@ -72,11 +71,14 @@ This illustrates the need for concealing -- the choice must be secret. In practi
 by forming the shape keeping the hand behind one's back. Furthermore, it must not be possible to change
 the value after commitment. Otherwise, after one of the players reveals his choice, the other could again
 switch to winning shape. In practice, players reveals their values simultaneously, thus in principle it
-should not be possible to cheat.
+should not be possible to cheat.\footnotemark
 
+\footnotetext{
 Of course, someone with superhuman reflexes and perception could still manage to switch sufficiently 
-fast -- it's an inherent theoretical security flow. With a proper commitment scheme, there is no
-such problem, as long as both players commit to their choice before reveal phase.
+fast, so it is, in principle, neither concealing, nor binding -- it's an inherent theoretical security
+flow. With a proper commitment scheme, there is no such problem, as long as both players commit to their
+choice before the reveal phase.
+}
 
 
 \section{Commitment schemes in modern cryptography}
@@ -113,7 +115,7 @@ Let \(G\) be the graph. The protocol consists of following steps:
       \item graph \(G'\) and isomorphism \(\sigma\)
       \item image of Alice's hamiltonian cycle by \(\sigma\), i.e. hamiltonian cycle in \(G'\)
     \end{enumerate}
-  \item Bob verifies the answer
+  \item Bob verifies the answer, depending on the question
 \end{enumerate}
 
 If Alice can consistently produce acceptable responses to Bob's questions, he can conclude with high
@@ -122,9 +124,9 @@ to exhibit isomorphism between \(G\) and her choosen graph \(G'\), even if she k
 cycle in \(G'\), or she wouldn't be able to find hamiltonian cycle in \(G'\), even if she knew an
 isomorphism \(G\cong G'\). At the same time, Bob learns nothing about the cycle in \(G\), since he
 either gets the isomorphism and no cycle, or he gets cycle in some graph \(G'\neq G\), but without
-full knowledge of \(G'\) and the isomorphism he cannot pull it back to \(G\) (even with full knowledge
-of \(G'\) he cannot easily find an isomorphism by himself, as no polynomial algorithm for Graph 
-Isomorphism Problem is known).
+full knowledge of \(G'\) and the isomorphism he cannot pull it back to \(G\).
+\footnote{Even with full knowledge of \(G'\) he cannot easily find an isomorphism by himself, as no
+polynomial algorithm for Graph Isomorphism Problem is known.}
 
 
 \subsection{Secret sharing}
@@ -139,11 +141,16 @@ to obtain one part of such ,,secret''.
 There are quite a few known approaches, ranging from relatively easy, like Shamir's scheme, where
 the secret is a polynomial, and shares are its' values for some arguments (the secret is reconstructed
 as a unique interpolation through such points), or Blakley's scheme (secret is a point in euclidean
-space, shares are hyperplanes, such that the point is their intersection -- it's actually the same
-mechanism as in Shamir's scheme, since in both cases the fundamental idea is distributing parts of
-system of linear equations), through more complicated, more general constructions (albeit, perhaps
-a bit surprisingly, still largely based on linear algebra over Galois fields), to relatively new 
-non-linear schemes \cite{Beimel01onthe}. For an overview of the subject see \cite{SharingSurvey}.
+space, shares are hyperplanes, such that the point is their intersection) \footnotemark, through more
+complicated, more general constructions (albeit, perhaps a bit surprisingly, still largely based on linear
+algebra over Galois fields), to relatively new non-linear schemes \cite{Beimel01onthe}. For an overview 
+of the subject see \cite{SharingSurvey}.
+
+\footnotetext{The principle is actually the same as in Shamir's scheme, since in both cases the
+fundamental idea is distributing parts of system of linear equations. There is an important difference,
+though -- shares in Shamir's scheme are constant, while in Blakley's scheme they grow linearly with
+the number of participants, unless some restrictions on the hyperplanes are placed.}
+
 
 The variant of the problem where commitment schemes found use is known as verifiable secret sharing.
 In the standard formulation, participants are assumed to be honest, and carry out the protocol correctly.
@@ -151,8 +158,9 @@ If this is not the case, it becomes critical that players can verify their own a
 validity. Possible realization of verifiable secret sharing consists of distributing publicly proofs
 (certificates) of the shares, so that each share can be verified by anyone that possesses it. Such
 protocols can be used to construct \emph{simultaneous broadcast networks}. See \cite{VerifiableSharing}
-for details and example algorithm (which, by the way, utilizes the concept of oblivious transfer,
-discussed in one of the next sections).
+for details and example algorithm. 
+\footnote{Which, by the way, utilizes the concept of oblivious transfer, discussed in one of the next
+sections}
 
 \subsection{Secure multiparty computation}
 
@@ -166,8 +174,8 @@ computation has many more practical applications, like negotiations, voting or a
 As it turns out, secure computation is feasible for a very large class of functions, as was shown in
 \cite{Goldreich87}, where an effective algorithm for creating a secure protocol based on the description
 of the computation has been presented. In \cite{Chaum88} another, slightly more general approach has
-been proposed. In both cases, commitment schemes are utilized to ensure correctness of computation by
-means of verifiable secret sharing. 
+been proposed. In both cases, commitment schemes are utilized to ensure correctness of computation in
+presence of sufficiently small number of malicious participants by means of verifiable secret sharing. 
 
 \subsection{Oblivious transfer}
 
@@ -192,7 +200,21 @@ The algorithm is not perfect -- in particular, when Alice receives one of the Bo
 she sends anything important to Bob, she knows Bob's secret with probability \(\frac{1}{2}\). More
 important than the algorithm itself, though, is the idea of distributing information without learning
 the state of knowledge of the recipient. In particular, secure oblivious transfer protocol is enough
-to solve secure multiparty computation problem \cite{Kilian88}.
+to solve secure multiparty computation problem \cite{Kilian88}. In the classical setting, bit commitment
+is strictly weaker primitive than oblivious transfer. In the quantum setting, however, bit commitment
+has been proven sufficient to build secure oblivious transfer protocol \cite{Bennet92,Yao95,Damgard09}.
+\footnotemark
+
+\footnotetext{Also, oblivious transfer can be used to create bit commitment protocol, hence these two
+problems are equivalent in quantum setting. Sadly, it implies unconditionally secure oblivious transfer
+is impossible, as it has been proven there can be no unconditionally secure quantum bit commitment
+protocols \cite{Mayers97,Brassard97,Lo98,Chiribella2013}} 
+
+
+\section{Classical commitment protocols}
+
+In this section, we shall take a brief look at the classical approaches to the commitment problem,
+and try to identify their shortcomings.
 
 
 \nocite{*}
