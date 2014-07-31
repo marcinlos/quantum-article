@@ -75,8 +75,8 @@ switch to winning shape. In practice, players reveals their values simultaneousl
 should not be possible to cheat.
 
 Of course, someone with superhuman reflexes and perception could still manage to switch sufficiently 
-fast -- it's an inherent theoretical security flow. With a proper commitment scheme, there would be no
-such problem, as long as both players commit their choice before reveal phase.
+fast -- it's an inherent theoretical security flow. With a proper commitment scheme, there is no
+such problem, as long as both players commit to their choice before reveal phase.
 
 
 \section{Commitment schemes in modern cryptography}
@@ -95,7 +95,7 @@ Common special case is proving that one possesses some information without revea
 One simple example comes from asymmetric cryptography: if Alice posesses the private key matching Bob's
 public key, she can prove it to Bob in the following manner: Bob chooses a random string, encrypts it
 with the public key, and sends it to Alice, who subseqnently uses her private key to decrypt the message,
-and sends it to Bob in plaintext. Assuming security of choosen encryption algorithm, Bob can conclude 
+and sends the plaintext to Bob. Assuming security of choosen encryption algorithm, Bob can conclude 
 with high probability that if the plaintext matches his original encrypted message, Alice does indeed
 possess the private key. Furthermore, if Alice does not have the private key, she has no way to obtain
 the plaintext, short of breaking the encryption.
@@ -111,15 +111,16 @@ Let \(G\) be the graph. The protocol consists of following steps:
   \item Bob can now ask Alice for one of two things:
     \begin{enumerate}
       \item graph \(G'\) and isomorphism \(\sigma\)
-      \item image of Alice's hamiltonian cycle by \(sigma\), i.e. hamiltonian cycle in \(G'\)
+      \item image of Alice's hamiltonian cycle by \(\sigma\), i.e. hamiltonian cycle in \(G'\)
     \end{enumerate}
+  \item Bob verifies the answer
 \end{enumerate}
 
 If Alice can consistently produce acceptable responses to Bob's questions, he can conclude with high
 probability that she has indeed found the hamiltonian cycle in \(G\). Otherwise, she would either fail
 to exhibit isomorphism between \(G\) and her choosen graph \(G'\), even if she knew a hamiltonian
 cycle in \(G'\), or she wouldn't be able to find hamiltonian cycle in \(G'\), even if she knew an
-isomorphism \(G\cong G\). At the same time, Bob learns nothing about the cycle in \(G\), since he
+isomorphism \(G\cong G'\). At the same time, Bob learns nothing about the cycle in \(G\), since he
 either gets the isomorphism and no cycle, or he gets cycle in some graph \(G'\neq G\), but without
 full knowledge of \(G'\) and the isomorphism he cannot pull it back to \(G\) (even with full knowledge
 of \(G'\) he cannot easily find an isomorphism by himself, as no polynomial algorithm for Graph 
@@ -151,7 +152,47 @@ validity. Possible realization of verifiable secret sharing consists of distribu
 (certificates) of the shares, so that each share can be verified by anyone that possesses it. Such
 protocols can be used to construct \emph{simultaneous broadcast networks}. See \cite{VerifiableSharing}
 for details and example algorithm (which, by the way, utilizes the concept of oblivious transfer,
-discussed in the next section).
+discussed in one of the next sections).
+
+\subsection{Secure multiparty computation}
+
+Closely related to secret sharing is the problem of secure multiparty computation, where participants
+want to calculate value of a function for an input constructed from their partial inputs, without
+revealing their partial inputs to each other. Canonical example of such situation is the \emph{milionaire
+problem}, described in one of the first papers on the subject \cite{Yao}: two milionaires wish to
+know which one is richer, but they are reluctant to reveal their net worth. Needless to say, multiparty
+computation has many more practical applications, like negotiations, voting or auctions \cite{grigoriev}.
+
+As it turns out, secure computation is feasible for a very large class of functions, as was shown in
+\cite{Goldreich87}, where an effective algorithm for creating a secure protocol based on the description
+of the computation has been presented. In \cite{Chaum88} another, slightly more general approach has
+been proposed. In both cases, commitment schemes are utilized to ensure correctness of computation by
+means of verifiable secret sharing. 
+
+\subsection{Oblivious transfer}
+
+Oblivious transfer protocol is a way to transmit information from sender to receiver in such a way,
+that the sender does not know what precisely did he send, in particular -- if he sent anything at all.
+This seemingly weird concept, introduced in \cite{Rabin81}, turns out to be of fundamental importance.
+
+Original context in which it appeared was an algorithm for exchange of secrets: Alice and Bob have some
+values, and they want to exchange it, so that no party can withdraw from the protocol after obtaining
+the secret of the other, before giving away its' own secret. With certain assumptions, the problem
+can be solved with oblivious transfer. The basic idea of the protocol described in \cite{Rabin81} is:
+
+\begin{itemize}
+  \item it can fail -- it's possible that after completing the protocol, neither side knows 
+    the other's secret
+  \item at the end of the protocol, Bob knows whether or not he has obtained Alice's secret
+  \item it is assumed that Alice can always find out whether Bob has obtained the secret
+  \item Alice knows Bob's secret iff Bob has received her secret
+\end{itemize}
+
+The algorithm is not perfect -- in particular, when Alice receives one of the Bob's messages, before
+she sends anything important to Bob, she knows Bob's secret with probability \(\frac{1}{2}\). More
+important than the algorithm itself, though, is the idea of distributing information without learning
+the state of knowledge of the recipient. In particular, secure oblivious transfer protocol is enough
+to solve secure multiparty computation problem \cite{Kilian88}.
 
 
 \nocite{*}
