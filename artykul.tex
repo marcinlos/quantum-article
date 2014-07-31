@@ -1,4 +1,4 @@
-\documentclass[10pt,pdftex]{article}
+\documentclass[10pt]{article}
 
 \usepackage{csagh}
 
@@ -10,6 +10,7 @@
 %\usepackage[pdftex]{graphicx}
 %\usepackage[pdftex]{hyperref} 
 %\usepackage{bookmark}
+\usepackage{url}
 
 \usepackage{polski}
 \usepackage[polish]{babel}
@@ -79,6 +80,51 @@ such problem, as long as both players commit their choice before reveal phase.
 
 
 \section{Commitment schemes in modern cryptography}
+
+In this section, we shall explore briefly some of the applications of commitment schemes in various
+areas of cryptography, to provide further motivation and emphasize importance of the subject.
+
+\subsection*{Zero-knowledge proofs}
+
+Zero-knowledge proof (protocol) is a method of proving some statement without revealing anything more
+than what is required to verify the proof. The problem bears resemblance to the commitment problem, but
+is more general. Nice introduction to the subject, with motivating examples and precise definitions can
+be found in the first two chapters of \cite{MIT:StatZero}. 
+
+Common special case is proving that one possesses some information without revealing it.
+One simple example comes from asymmetric cryptography: if Alice posesses the private key matching Bob's
+public key, she can prove it to Bob in the following manner: Bob chooses a random string, encrypts it
+with the public key, and sends it to Alice, who subseqnently uses her private key to decrypt the message,
+and sends it to Bob in plaintext. Assuming security of choosen encryption algorithm, Bob can conclude 
+with high probability that if the plaintext matches his original encrypted message, Alice does indeed
+possess the private key. Furthermore, if Alice does not have the private key, she has no way to obtain
+the plaintext, short of breaking the encryption.
+
+Commitment schemes often prove useful as building blocks of zero-knowledge protocols. Well-known example
+is a way for Alice to prove she knows the Hamiltonian cycle in certain graph, without revealing the
+cycle. Detailed discussion and analysis can be found in the first section of \cite{CM:CryptoNotes}. 
+Let \(G\) be the graph. The protocol consists of following steps:
+
+\begin{enumerate}
+  \item Alice chooses some graph \(G'\) isomorphic to \(G\) and isomorphism \(\sigma\colon G\cong G'\)
+  \item Alice commits to her choice
+  \item Bob can now ask Alice for one of two things:
+    \begin{enumerate}
+      \item graph \(G'\) and isomorphism \(\sigma\)
+      \item image of Alice's hamiltonian cycle by \(sigma\), i.e. hamiltonian cycle in \(G'\)
+    \end{enumerate}
+\end{enumerate}
+
+If Alice can consistently produce acceptable responses to Bob's questions, he can conclude with high
+probability that she has indeed found the hamiltonian cycle in \(G\). Otherwise, she would either fail
+to exhibit isomorphism between \(G\) and her choosen graph \(G'\), even if she knew a hamiltonian
+cycle in \(G'\), or she wouldn't be able to find hamiltonian cycle in \(G'\), even if she knew an
+isomorphism \(G\cong G\). At the same time, Bob learns nothing about the cycle in \(G\), since he
+either gets the isomorphism and no cycle, or he gets cycle in some graph \(G'\neq G\), but without
+full knowledge of \(G'\) and the isomorphism he cannot pull it back to \(G\) (even with full knowledge
+of \(G'\) he cannot easily find an isomorphism by himself, as no polynomial algorithm for Graph 
+Isomorphism Problem is known).
+
 
 \nocite{*}
 
