@@ -84,7 +84,7 @@ such problem, as long as both players commit their choice before reveal phase.
 In this section, we shall explore briefly some of the applications of commitment schemes in various
 areas of cryptography, to provide further motivation and emphasize importance of the subject.
 
-\subsection*{Zero-knowledge proofs}
+\subsection{Zero-knowledge proofs}
 
 Zero-knowledge proof (protocol) is a method of proving some statement without revealing anything more
 than what is required to verify the proof. The problem bears resemblance to the commitment problem, but
@@ -124,6 +124,34 @@ either gets the isomorphism and no cycle, or he gets cycle in some graph \(G'\ne
 full knowledge of \(G'\) and the isomorphism he cannot pull it back to \(G\) (even with full knowledge
 of \(G'\) he cannot easily find an isomorphism by himself, as no polynomial algorithm for Graph 
 Isomorphism Problem is known).
+
+
+\subsection{Secret sharing}
+
+Secret sharing is a problem of distributing parts of an information (,,secret'') among a group of
+entities (,,players''), such that some number of parts, bounded from below, is necessary to 
+reconstruct the full information. A vivid example from popular culture is the concept that usage
+of mass-destruction weapons, e.g. nuclear missles, requires authorization and ,,launch codes'' of
+two people, to increase security and prevent usage by malicious third parties, that might be able
+to obtain one part of such ,,secret''.
+
+There are quite a few known approaches, ranging from relatively easy, like Shamir's scheme, where
+the secret is a polynomial, and shares are its' values for some arguments (the secret is reconstructed
+as a unique interpolation through such points), or Blakley's scheme (secret is a point in euclidean
+space, shares are hyperplanes, such that the point is their intersection -- it's actually the same
+mechanism as in Shamir's scheme, since in both cases the fundamental idea is distributing parts of
+system of linear equations), through more complicated, more general constructions (albeit, perhaps
+a bit surprisingly, still largely based on linear algebra over Galois fields), to relatively new 
+non-linear schemes \cite{Beimel01onthe}. For an overview of the subject see \cite{SharingSurvey}.
+
+The variant of the problem where commitment schemes found use is known as verifiable secret sharing.
+In the standard formulation, participants are assumed to be honest, and carry out the protocol correctly.
+If this is not the case, it becomes critical that players can verify their own and each other's shares'
+validity. Possible realization of verifiable secret sharing consists of distributing publicly proofs
+(certificates) of the shares, so that each share can be verified by anyone that possesses it. Such
+protocols can be used to construct \emph{simultaneous broadcast networks}. See \cite{VerifiableSharing}
+for details and example algorithm (which, by the way, utilizes the concept of oblivious transfer,
+discussed in the next section).
 
 
 \nocite{*}
