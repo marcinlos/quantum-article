@@ -15,6 +15,7 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
+\usepackage[ruled]{algorithm2e}
 
 \usepackage{polski}
 \usepackage[polish]{babel}
@@ -369,6 +370,74 @@ certain types of attacks (e.g. most proofs assume the information is carried by 
 which is rather technically challenging constraint). Nevertheless, over time more and more refined
 protocols have been devised, improving safety and efficiency. It doesn't seem to be an exaggeration 
 to say that the state of the art, both theoretical and practical, is impressive.
+
+\subsection{BCJL protocol}
+
+Success of QKD undoubtedly spurred further research in quantum cryptography. As the solution to the 
+problem of bit commitment has been shown to be sufficient for implementation of oblivious transfer
+in the quantum setting, it was a ,,valuable target'' \cite{Crepeau88,Bennet92}. First quantum bit
+commitment protocol was proposed in 1984 in \cite{bb84}\footnotemark, but had major flaws, allowing
+Alice to cheat using EPR effects \cite{bcjl93}. First protocol with claims of provable unconditional
+security -- BCJL\footnote{It's introduced in a paper by G. Brassard, C. Cr\'{e}peau, R. Jozsa, 
+D. Langlois.} protocol -- appeared in 1993 \cite{bcjl93}.
+
+\footnotetext{It also contains the first quantum key distribution protocol.} 
+
+The main idea of the algorithm is that 2 different measurements (orthonormal bases) are used, 
+\(\mathcal{B}_1\) and \(\mathcal{B}_2\). The transmission is carried out using \(n\)-bit linear
+code. Alice chooses two vectors, such that their dot product is the bit she wishes to commit and
+shows one of the vectors to Bob. The second is transmitted using the quantum channel, using randomly
+choosen sequence of bases. Bob randomly chooses bases and measures incoming qubits from Alice. In the
+reveal phase, Alice reveals her choice of bases, and second vector, and Bob checks if it matches
+the data he received correctly.
+
+
+Let \(\langle a,b\rangle\) denote standard inner product in \(\mathbb{F}_2^n\), and \(b\in\{0,1\}\) 
+be the value Alice wishes to commit to.
+
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Commitment phase}}
+Bob chooses suitable \(n\)-bit linear code \(C\) \;
+Alice chooses random value \(r\in\mathbb{F}_2^n\) and sends it to Bob \;
+Alice chooses codeword \(c\in C\) such that \(\langle r,c\rangle = b\) \;
+\For{\(i\in\{1,\ldots,n\}\)}{
+  Alice chooses randomly \(B_i\in\{\mathcal{B}_1, \mathcal{B}_2\}\) \;
+  So does Bob, he chooses \(B'_i\in\{\mathcal{B}_1, \mathcal{B}_2\}\) \;
+  Alice prepares a qubit in state \(c_i\) with respect to basis \(B_i\) \;
+  Alice sends it to Bob via the quantum channel \;
+  Bob measures the qubit with respect to basis \(B'_i\), obtains result \(c'_i\) \;
+}
+\end{algorithm}
+
+After the commitment phase, Bob has values \(c'_1,\ldots,c'_n\), roughly \(\frac{3}{4}\) of 
+which match Alice's \(c_1,\ldots,c_n\). Linear code \(C\) is choosen such that the amount of
+information Bob possesses about actual value of \(c\) is negligible (exponentially small with
+respect to \(n\)).
+
+Reveal phase is significantly simpler:
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Reveal phase}}
+Alice sends \(c\) and \(x\) to Bob \;
+Bob computes the value of \(b=\langle r,c\rangle\) \;
+Bob calculates total amount of mismatches for all \(i\) such that \(B'_i=B_i\) \;
+\eIf{it is sufficiently small} {
+  he accepts
+}{
+  he rejects
+}
+\end{algorithm}
+
+The original paper contains proofs that all the concievable attack strategies for both Alice
+and Bob have vanishingly small probability of success. This part, although not prohibitively
+difficult to comprehend, is rather technical and lengthy, so shall not be explored here.
+\footnote{As, unfortunately, seems to be the case for most of the remaining proofs. Unlike
+some of the classical solutions, quantum cryptography seems to rely on rather delicate, technical
+bounds and careful, precise probability estimates, thus does not lend itself to clear exposition
+easily.}
 
 
 \section{Summary}
