@@ -201,8 +201,9 @@ she sends anything important to Bob, she knows Bob's secret with probability \(\
 important than the algorithm itself, though, is the idea of distributing information without learning
 the state of knowledge of the recipient. In particular, secure oblivious transfer protocol is enough
 to solve secure multiparty computation problem \cite{Kilian88}. In the classical setting, bit commitment
-is strictly weaker primitive than oblivious transfer. In the quantum setting, however, bit commitment
-has been proven sufficient to build secure oblivious transfer protocol \cite{Bennet92,Yao95,Damgard09}.
+is strictly weaker primitive than oblivious transfer \cite{Brassard88}. In the quantum setting, however,
+bit commitment has been proven sufficient to build secure oblivious transfer protocol 
+\cite{Bennet92,Yao95,Damgard09}.
 \footnotemark
 
 \footnotetext{Also, oblivious transfer can be used to create bit commitment protocol, hence these two
@@ -214,8 +215,56 @@ protocols \cite{Mayers97,Brassard97,Lo98,Chiribella2013}}
 \section{Classical commitment protocols}
 
 In this section, we shall take a brief look at the classical approaches to the commitment problem,
-and try to identify their shortcomings.
+and try to identify their shortcomings. 
 
+One fundamental issue with all the classical protocols, consisting of simple exchange of messages,
+is that they cannot provide perfect, unconditional security to both Bob and Alice. As we shall see,
+there are perfectly hiding protocols, and perfectly concealing protocols, but not both. Without
+precise mathematical framework it's impossible to provide a rigorous proof, but it's possible to
+give a (more or less) convincing argument. For simplicity, let us consider the case of bit commitment,
+where the commited information is a single bit. Suppose there is such protocol. Commitment proof \(c\) 
+is created from some information \(r\), known only to the commiter, and the commited value 
+\(v\in\{0,1\}\). That is, \(c=\phi(r,v)\). Since the protocol is perfectly concealing, there must
+be \(r'\) such that \(\phi(r,v)=\phi(r',1-v)\), otherwise \(c\) carries full information about \(v\),
+and Bob, having unlimited computational resources, can determine \(v\). But then, Alice, having 
+unlimited computational resources as well, can find such \(r'\), and during the reveal phase present 
+Bob with \(r', 1-v\) instead of \(r, v\), thus changing her commitment.
+\footnote{This reasoning does not apply to quantum protocols, due to their fundamentally different
+nature. The conclusion is still true, unfortunately, but the proof is quite different.}
+
+\subsection*{Graph Isomorphism}
+
+Let \(G\) and \(H\) be isomorphic graphs, provided by Bob. Suppose Alice wants to commit to value 0
+or 1. To do this, she creates a graph \(F\) isomorphic to \(G\) if her choice is 0, and isomorphic 
+to \(H\) otherwise (for example, by randomly permuting the vertices), and presents it to Bob. Later,
+if she wants reveal the value and prove she has commited to it (open a commitment), she exhibits 
+isomorphism between \(F\) and \(G\) or \(H\), depending on her choice.
+
+Security of this algorithm depends on two assumptions:
+
+\begin{itemize}
+  \item it is computationally infeasible for Alice to find isomorphism between the graphs used in the
+    protocol
+  \item Alice is certain that \(G\) and \(H\) are indeed isomorphic, even though she doesn't know
+    the isomorphism
+\end{itemize}
+
+First assumption is (almost) enough to provide practical security. Alice cannot cheat, since that would
+require finding an isomorphism between \(F\) and one of \(G\), \(H\) different than the one she used to
+create \(F\). She cannot create graph such that she knows isomorphisms with both \(G\) and \(H\), since
+that would yield an isomorphism between \(G\) and \(H\). Furthermore, Bob, regardless of computational
+power, cannot extract any information from \(F\), as it's isomorphic to both \(G\) and \(H\). The only 
+way for Bob to cheat is to provide graphs \(G\), \(H\) which are not isomorphic. Then, if he possesses
+sufficient resources, he can learn the value of Alice's bit by finding an isomorphism between \(F\) and
+one of \(G\), \(H\).
+
+From the above discussion, we can see that if the two assumptions are satisfied, the algorithm is
+perfectly concealing (Bob does not gain any information whatsoever), and binding if Alice cannot solve
+the graph isomorphism problem.
+
+This is one of the oldest and simplest proposed algorithms, presented as an ,,elementary example'' 
+in the original paper that actually defined the notion of commitment scheme \cite{Brassard88}, and 
+used it as a primitive to construct zero-knowledge protocols.
 
 \nocite{*}
 
