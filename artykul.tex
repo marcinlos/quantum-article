@@ -208,7 +208,7 @@ the state of knowledge of the recipient. In particular, secure oblivious transfe
 to solve secure multiparty computation problem \cite{Kilian88}. In the classical setting, bit commitment
 is strictly weaker primitive than oblivious transfer \cite{Brassard88}. In the quantum setting, however,
 bit commitment has been proven sufficient to build secure oblivious transfer protocol 
-\cite{Bennet92,Yao95,Damgard09}.
+\cite{Crepeau88,Bennet92,Yao95,Damgard09}.
 \footnotemark
 
 \footnotetext{Also, oblivious transfer can be used to create bit commitment protocol, hence these two
@@ -219,8 +219,10 @@ protocols \cite{Mayers97,Brassard97,Lo98,Chiribella2013}}
 
 \section{Classical commitment protocols}
 
-In this section, we shall take a brief look at the classical approaches to the commitment problem,
-and try to identify their shortcomings. 
+In this section, we shall take a brief look at few classical approaches to the commitment problem,
+and try to identify their shortcomings. Of course, by no means does the following discussion aim
+to be a complete survey of the field. Its sole purpose is to give a general idea what kind of 
+techniques are commonly used. For more information, see e.g. \cite{Brassard88,Naor91,Naor98,Damgard02}.
 
 One fundamental issue with all the classical protocols, consisting of simple exchange of messages,
 is that they cannot provide perfect, unconditional security to both Bob and Alice. As we shall see,
@@ -290,6 +292,8 @@ a generator of \(\mathbb{F}_p\), for any \(x\in\mathbb{F}_p\) there exists uniqu
 such that \(x\equiv \alpha^y \mod p\), thus Alice cannot change the commited value, regardless
 of her computational resources.
 
+
+
 \footnotetext{
 Concealing property of this algorithm relies on the difficulty of computing discrete logarithm.
 However, while obtaining the whole value is infeasible, some bits of the result can be easily 
@@ -332,6 +336,40 @@ thus ommited. Details can be found in \cite{Naor98}.
 \footnotetext{They need to agree which one is \(y_0\), and which one is \(y_1\). One way to achieve
 this is to fix an total order on \(\mathbb{F}_2^n\), e.g. lexicographical, and let \(y_0\) denote the
 smaller solution.}
+
+\section{What does the quantum mechanics bring to the table?}
+
+Predictions of quantum mechanics, over the decades, has been considered by many as defying our intuitive
+grasp of reality, if not the nature of the universe itself. Principles governing quantum world seem to
+strongly deviate from those of the macroscopic world we observe every day, hence it seems concievable
+that, given such vastly different rules, certain problems unsolvable in the classical setting, can be
+solved within this new framework. Strong connections with information theory are readily apparent -- 
+different nature of the information itself (qubit vs classical bit), of its storage (e.g. no-cloning 
+theorem), of the measurement process (e.g. wave function collapse), inherent probabilistic aspects --
+all of this could be seen as a promise of a new, rich breeding ground for ideas and technologies
+capable of achieving things previously deemed impossible. Given the fundamental limitations and flaws
+of classical cryptographical protocols, a natural question arises: can quantum mechanics do better?
+
+\subsection*{Success of Quantum Key Distribution}
+
+Possibly the most significant advances in quantum cryptography have been made in the area of Quantum
+Key Distribution (QKD). Key distribution is a problem where two parties wish to produce shared secret
+key. Probably the most spectacular application of perfectly secure key distribution protocol is the
+fact it makes one-time pad encryption (proven by Shannon to be perfectly secure) practically possible.
+Classicaly, one-time pad, although of theoretical interest, was not considered usable, since the
+key needs to be the same size as the message to be encrypted with it, and still needs to be somehow 
+securely transmitted, which does not seem to be significantly easier than transmitting the message
+itself.
+
+Nevertheless, unique features of quantum mechanics (namely, destructiveness of measurment process)
+allowed  for creating distribution protocols such that any eavesdropping third-party can be detected,
+so if the key is compromised, communicating parties are aware of that \cite{bb84}. Although the
+theoretical versions of such protocols are proven to be secure, practical considerations facilitate
+certain types of attacks (e.g. most proofs assume the information is carried by a single photon,
+which is rather technically challenging constraint). Nevertheless, over time more and more refined
+protocols have been devised, improving safety and efficiency. It doesn't seem to be an exaggeration 
+to say that the state of the art, both theoretical and practical, is impressive.
+
 
 \section{Summary}
 
