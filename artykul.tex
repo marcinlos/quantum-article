@@ -1,6 +1,6 @@
 \documentclass[10pt]{article}
 
-\usepackage{csagh}
+
 
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern} 
@@ -19,6 +19,7 @@
 \usepackage{polski}
 \usepackage[polish]{babel}
 
+\usepackage{csagh}
 
 \begin{document}
 \begin{opening}
@@ -34,7 +35,7 @@
 
 \end{opening}
 
-\section{What is a commitment scheme?}
+\section{What is a commitment scheme?} 
 
 A commitment scheme is a cryptographic protocol that allows one (henceforth known as ,,Alice'') to make a
 permanent choice (\emph{commitment}), and provide a prove of this fact to other parties (henceforth known
@@ -292,9 +293,45 @@ of her computational resources.
 \footnotetext{
 Concealing property of this algorithm relies on the difficulty of computing discrete logarithm.
 However, while obtaining the whole value is infeasible, some bits of the result can be easily 
-obtained, hence some care must be taken to avoid placing secret bit in this range. See 
+determined, hence some care must be taken to avoid placing secret bit in this range. See 
 \cite{Brassard88} for details and references.
 }
+
+\subsection*{Protocol based on one-way permutation} 
+
+Another protocol utlizes concept of one-way permutation. Intuitively, it is a easy to compute
+bijection \(\sigma\colon \{1\ldots n\}\rightarrow \{1\ldots n\}\), such that calculating the
+inverse is computationally infeasible \footnotemark. Let \(\langle a,b\rangle\) denote standard
+inner product in \(\mathbb{F}_2^n\), and \(b\in\{0,1\}\) be the value Alice wishes to commit to.
+The protocol consists of the following steps:
+
+\footnotetext{This can be made precise. See \cite{Naor98} for details} 
+
+\begin{enumerate}
+  \item Alice and Bob choose one-way permutation \(\sigma\colon \mathbb{F}_2^n\rightarrow 
+    \mathbb{F}_2^n\)
+  \item Alice chooses random vector \(x\in\mathbb{F}_2^n\), and calculates \(y=\sigma(x)\)
+  \item Bob chooses \((n-1)\) linearly independent vectors \(h_i\in\mathbb{F}_2^n\), 
+    \(i=1,\ldots, n-1\)
+  \item Bob sends them to Alice, who computes \(c_i=\langle h_i, y\rangle\) and sends the results to Bob
+  \item Solutions to system of equations \(\langle h_i, X\rangle = c_i\) form one-dimensional
+    affine subspace of \(\mathbb{F}_2^n\), consisting of two elements, \(y_0\) and \(y_1\). Alice
+    and Bob compute these solutions.\footnotemark
+  \item Let \(c\) be such that \(y_c = y\). Alice sends to Bob \(d=b\oplus c\)
+\end{enumerate}
+
+Reveal phase consists of Alice sending \(b\) and \(x\) to Bob, who computes \(y=f(x)\) and verifies
+the data obtained previously from Alice.
+
+Concealing is relatively easy to show, it follows from the fact that regardless of \(b\), distribution
+of the information possessed by Bob, i.e. \(h_i\), \(c_i\) and \(d\) is the same. The scheme is thus
+perfectly concealing. It is also computationally binding. The proof, however, is rather involved, and 
+thus ommited. Details can be found in \cite{Naor98}.
+
+
+\footnotetext{They need to agree which one is \(y_0\), and which one is \(y_1\). One way to achieve
+this is to fix an total order on \(\mathbb{F}_2^n\), e.g. lexicographical, and let \(y_0\) denote the
+smaller solution.}
 
 \section{Summary}
 
