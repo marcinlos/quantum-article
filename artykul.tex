@@ -12,6 +12,10 @@
 %\usepackage{bookmark}
 \usepackage{url}
 
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+
 \usepackage{polski}
 \usepackage[polish]{babel}
 
@@ -219,11 +223,14 @@ and try to identify their shortcomings.
 
 One fundamental issue with all the classical protocols, consisting of simple exchange of messages,
 is that they cannot provide perfect, unconditional security to both Bob and Alice. As we shall see,
-there are perfectly hiding protocols, and perfectly concealing protocols, but not both. Without
-precise mathematical framework it's impossible to provide a rigorous proof, but it's possible to
-give a (more or less) convincing argument. For simplicity, let us consider the case of bit commitment,
-where the commited information is a single bit. Suppose there is such protocol. Commitment proof \(c\) 
-is created from some information \(r\), known only to the commiter, and the commited value 
+there are perfectly hiding protocols, and perfectly concealing protocols, but not both. These two
+goals seem to be conflicting -- concealing requires ,,weak'' proof, while binding needs it to be
+sufficiently ,,strong''.
+
+Without precise mathematical framework it's impossible to provide a rigorous proof, but it's possible 
+to give a (more or less) convincing argument. For simplicity, let us consider the case of bit 
+commitment, where the commited information is a single bit. Suppose there is such protocol. Commitment 
+proof \(c\) is created from some information \(r\), known only to the commiter, and the commited value 
 \(v\in\{0,1\}\). That is, \(c=\phi(r,v)\). Since the protocol is perfectly concealing, there must
 be \(r'\) such that \(\phi(r,v)=\phi(r',1-v)\), otherwise \(c\) carries full information about \(v\),
 and Bob, having unlimited computational resources, can determine \(v\). But then, Alice, having 
@@ -232,7 +239,7 @@ Bob with \(r', 1-v\) instead of \(r, v\), thus changing her commitment.
 \footnote{This reasoning does not apply to quantum protocols, due to their fundamentally different
 nature. The conclusion is still true, unfortunately, but the proof is quite different.}
 
-\subsection*{Graph Isomorphism}
+\subsection*{Protocol based on Graph Isomorphism Problem}
 
 Let \(G\) and \(H\) be isomorphic graphs, provided by Bob. Suppose Alice wants to commit to value 0
 or 1. To do this, she creates a graph \(F\) isomorphic to \(G\) if her choice is 0, and isomorphic 
@@ -265,6 +272,31 @@ the graph isomorphism problem.
 This is one of the oldest and simplest proposed algorithms, presented as an ,,elementary example'' 
 in the original paper that actually defined the notion of commitment scheme \cite{Brassard88}, and 
 used it as a primitive to construct zero-knowledge protocols.
+
+\subsection*{Protocol based on Discrete Logarithm Problem}
+
+Let \(p\) be a prime number, \(\mathbb{F}_p=\mathbb{Z}/p\mathbb{Z}\). It is well-known that 
+\(\mathbb{F}_p\) is a field, and that multiplicative subgroup of a finite field is cyclic, hence it
+has a generator. At the beginning of the protocol, Alice and Bob choose \(p\) and \(\alpha\), some
+generator of \(\mathbb{F}^*_p\). Let \(u\) be the smallest integer such that \(2^u \nmid p-1\). 
+Then, Alice chooses random \(0\leq y < p-1\) such that \(u\)-th bit of \(y\) is equal to the bit
+she wishes to commit to\footnotemark, and calculates \(x\equiv \alpha^y \mod p\), which she gives
+to Bob as the commitment proof. During the reveal phase, she presents Bob with \(y\).
+
+The algorithm is concealing, assuming Bob does not possess sufficient computational resources to
+calculate the discrete logarithm. On the other hand, it's perfectly binding -- since \(\alpha\) is
+a generator of \(\mathbb{F}_p\), for any \(x\in\mathbb{F}_p\) there exists unique \(0\leq y < p-1\)
+such that \(x\equiv \alpha^y \mod p\), thus Alice cannot change the commited value, regardless
+of her computational resources.
+
+\footnotetext{
+Concealing property of this algorithm relies on the difficulty of computing discrete logarithm.
+However, while obtaining the whole value is infeasible, some bits of the result can be easily 
+obtained, hence some care must be taken to avoid placing secret bit in this range. See 
+\cite{Brassard88} for details and references.
+}
+
+\section{Summary}
 
 \nocite{*}
 
