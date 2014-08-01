@@ -15,12 +15,15 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
+\usepackage{braket}
 \usepackage[ruled]{algorithm2e}
 
 \usepackage{polski}
 \usepackage[polish]{babel}
 
 \usepackage{csagh}
+
+\newtheorem{theorem}{Theorem}
 
 \begin{document}
 \begin{opening}
@@ -240,8 +243,8 @@ be \(r'\) such that \(\phi(r,v)=\phi(r',1-v)\), otherwise \(c\) carries full inf
 and Bob, having unlimited computational resources, can determine \(v\). But then, Alice, having 
 unlimited computational resources as well, can find such \(r'\), and during the reveal phase present 
 Bob with \(r', 1-v\) instead of \(r, v\), thus changing her commitment.
-\footnote{This reasoning does not apply to quantum protocols, due to their fundamentally different
-nature. The conclusion is still true, unfortunately, but the proof is quite different.}
+\footnote{Not to be confused with unconditional security of quantum protocols, discussed later.
+Such protocols also cannot exist, unfortunately, but the proof is quite different.}
 
 \subsection*{Protocol based on Graph Isomorphism Problem}
 
@@ -371,7 +374,7 @@ which is rather technically challenging constraint). Nevertheless, over time mor
 protocols have been devised, improving safety and efficiency. It doesn't seem to be an exaggeration 
 to say that the state of the art, both theoretical and practical, is impressive.
 
-\subsection{BCJL protocol}
+\subsection*{BCJL protocol}
 
 Success of QKD undoubtedly spurred further research in quantum cryptography. As the solution to the 
 problem of bit commitment has been shown to be sufficient for implementation of oblivious transfer
@@ -383,9 +386,22 @@ D. Langlois.} protocol -- appeared in 1993 \cite{bcjl93}.
 
 \footnotetext{It also contains the first quantum key distribution protocol.} 
 
-The main idea of the algorithm is that 2 different measurements (orthonormal bases) are used, 
-\(\mathcal{B}_1\) and \(\mathcal{B}_2\). The transmission is carried out using \(n\)-bit linear
-code. Alice chooses two vectors, such that their dot product is the bit she wishes to commit and
+At this point it might be worthwile to draw a distinction between \emph{perfect} security and
+\emph{unconditional} security \cite{Mayers97}. The former requires that Bob obtains absolutely no 
+information about Alice's choice whatsoever, and Alice in no way can make Bob believe she has choosen 
+value different than the one she has commited to. Due to the nature of quantum mechanics, security 
+requirements are usually stated in probabilistic terms -- security in this context means the 
+protocol has some ,,security parameter'' \(n\) (in a way, analogue of a ,,key size''), and by increasing
+\(n\) it's possible to get arbitrarily close to perfect security in a classical sense. Unconditional
+security means that such probabilistic security is completely independent of computational resources
+of involved parties -- indeed, they are assumed to possess unlimited power. This is where the
+key analogy breaks, as the ,,size of a key'' usually means size of a computational problem necessery
+to solve in order to break the scheme, while for unconditionally secure quantum algorithms the
+scheme is protected by laws of physics, as opposed to conjectures of complexity theory.
+
+The main idea of the algorithm is that 2 carefully choosen different measurements (orthonormal bases) 
+are used, \(\mathcal{B}_1\) and \(\mathcal{B}_2\). The transmission is carried out using \(n\)-bit 
+linear code. Alice chooses two vectors, such that their dot product is the bit she wishes to commit and
 shows one of the vectors to Bob. The second is transmitted using the quantum channel, using randomly
 choosen sequence of bases. Bob randomly chooses bases and measures incoming qubits from Alice. In the
 reveal phase, Alice reveals her choice of bases, and second vector, and Bob checks if it matches
@@ -439,6 +455,136 @@ some of the classical solutions, quantum cryptography seems to rely on rather de
 bounds and careful, precise probability estimates, thus does not lend itself to clear exposition
 easily.}
 
+\subsection*{Unconditionally secure quantum bit commitment is impossible}
+
+BCJL paper has received a lot of attention, and the existance of unconditionally secure quantum bit
+commitment has been used in other papers \cite{Yao95}. Soon, however, doubts began to emerge, and
+successful attacks on algorithms previously considered secure have been published, including the
+,,proven'' BCJL \cite{Lo96,Mayers96}\footnotemark. The final blow to the dream of achieving unconditionally
+secure bit commitment by means of quantum mechanics was delt year later, when D. Mayers \cite{Mayers97}
+and H. Lo, H. F. Chau \cite{Lo98} have independently proven that no such scheme exists, generalizing
+and extending methods used to bring down BCJL. The result is widely believed to be true, occasional
+voices of disagreement (like \cite{Yuen01}) don't seem to impact the opinion of majority.
+
+\footnotetext{Although, admittedly, it was one of the last to succomb
+to insecurity proof -- while Lo and Chau exhibited vulnerabilities in simpler variants, Mayers in
+\cite{Mayers96} claims his paper describes the first attack applicable to BCJL itself.}. 
+
+The source of the problem is the well-known EPR effect \cite{EPR}. While  attacks of this nature has
+been considered in some other areas of quantum cryptography (e.g. it is remarked as a theoretical,
+but technically infeasible, vulnerability of the coin-flipping scheme proposed in \cite{bb84}),
+it was not considered in the security proof of BCJL. The impossibility proof relies on an observation
+that if the protocol is secure against Bob, then the density matrices describing the state of the
+system visible to Bob for both possible Alice's choices must be very close to each other. Then if 
+Alice, instead of performing a measurement in the step when she prepares qubits for Bob, decides to
+skip it, it is possible for her later to find unitary transformation such that:
+\begin{itemize}
+  \item it only changes the bits she has access to
+  \item if applied to the system describing the whole protocol, it changes it to the state 
+    corresponding to different commitment
+\end{itemize}
+
+\subsection*{Example}
+
+Purpose of this section is to illustrate the main ideas behind the no-go theorem from the previous
+paragraph. It follows closely the simple variant of insecurity proof from \cite{Lo96}. While the actual
+general impossibility proof presented in \cite{Mayers97} does not seem to be excessively complicated,
+the basic ideas are the same, and so it might be more illuminating to focus on a simpler application.
+
+First, let us propose the general model of bit commitment protocol. Let \(\left\{\Ket{e_i}_A\right\}\),
+\(\left\{\Ket{e'_i}_A\right\}\) be two orthonormal bases, and \(\left\{\Ket{\phi_i}_B\right\}\),
+\(\left\{\Ket{\phi'_i}_B\right\}\) normalized states, with
+
+\[
+\sum_{i=1}^n\alpha_i \Ket{e_i}_A\otimes \Ket{\phi_i}_B=\Ket{0}
+\]
+\[
+\sum_{i=1}^n\beta_i \Ket{e'_i}_A\otimes \Ket{\phi'_i}_B=\Ket{1}
+\]
+Subscripts stand for \textbf{A}lice and \textbf{B}ob -- each of them has a part of the quantum system. 
+Both Alice and Bob know the states \(\left\{\Ket{\phi_i}_B\right\}\), \(\left\{\Ket{\phi'_i}_B\right\}\).
+
+Let \(b\) be the bit Alice wishes to commit to. Commitment phase is carried out in the following
+way:
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Commitment phase}}
+Depending on \(b\), Alice prepares the whole system as above \;
+Alice measures her part of the system, and obtains some value \(k\) \;
+Alice send to Bob his part of the system \;
+\end{algorithm}
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Reveal phase}}
+Alice sends \(b\) and \(n\) to Bob \;
+Bob measures his qubits to verify the correlations implied by data from Alice \;
+\end{algorithm}
+
+As it turns out, many proposed protocols can be described as special cases of this scheme 
+\cite{Lo96}. For example, in BJCL Bob measures qubits received from Alice immediately, but if we
+allow him to store them until the time Alice decides to open the commitment, we get a protocol
+that fits the above description.
+
+Crucial observation is that Bob's measurements depend only on the density matrix of his part
+of the system, i.e. partial trace over Alice's system. In the ideal case, he should not be able to
+get any information, so the partial traces should be equal for both \(b=0\) and \(b=1\) cases:
+
+\[
+\rho_B^0\equiv
+\operatorname{tr}_A \Ket{0}\Bra{0} = \operatorname{tr}_A \Ket{1}\Bra{1}
+\equiv\rho_B^1
+\]
+
+Final ingredient is the following theorem (slightly simplified)\cite{Hughston93}: 
+
+\vspace{5mm}
+
+\begin{theorem}(Schmidt polar decomposition) 
+Let \(\Ket{\xi}\in\mathcal{H}_A\otimes\mathcal{H}_B\) be normalized, 
+\(\dim \mathcal{H}_A=\dim\mathcal{H}_B=n\), let  \(\rho=\Ket{\xi}\Bra{\xi}\)
+and \(\rho_A=\operatorname{tr}_B\rho\), \(\rho_B=\operatorname{tr}_A\rho\) be partial traces. Then
+\begin{itemize}
+  \item \(\rho_A\), \(\rho_B\) have the same eigenvalues \(\left\{\lambda_i\right\}\)
+  \item It's possible to express \(\Ket{\xi}\) as 
+\[
+    \Ket{\xi}=\sum_{i=1}^n\sqrt{\lambda_i}\Ket{\psi_i}\otimes\Ket{\phi_i}
+\]
+    where \(\left\{\psi_i\right\}\), \(\left\{\phi_i\right\}\) are orthonormal bases consisting of
+    eigenvectors of \(\rho_A\) and \(\rho_B\), respectively. One of the bases may be choosen
+    arbitrarily.
+\end{itemize}
+\end{theorem}
+
+\vspace{3mm}
+
+(Easy) proof is ommited. Let us choose orthonormal basis \(\left\{\Ket{\psi_i}\right\}\)
+consisting of eigenvectors of \(\rho_B^0\). In view of the above theorem, there exist orthonormal
+bases \(\left\{e_i^0\right\}\), \(\left\{e_i^1\right\}\) such that
+\[
+\Ket{0}=\sum_{i=1}^n\sqrt{\lambda_i}\Ket{e_i^0}_A\otimes\Ket{\psi_i}_B
+\]
+\[
+\Ket{1}=\sum_{i=1}^n\sqrt{\lambda_i}\Ket{e_i^1}_A\otimes\Ket{\psi_i}_B
+\]
+
+Let \(\tau\) be a linear transformation defined on the system such that 
+\[
+\tau\colon\Ket{e_i^0}_A\otimes\Ket{\psi_i}_B \mapsto\Ket{e_i^1}_A\otimes\Ket{\psi_i}_B
+\]
+It is obviously unitary. As it does not change Bob's part of the system, Alice can apply it 
+without Bob's knowledge nor permission, thus effectively transforming system representing \(\Ket{0}\)
+to the one representing \(\Ket{1}\). Applying \(\tau^{-1}\) yields the opposite result. Therefore, 
+Alice has a strategy to cheat Bob.
+
+The assumption that \(\operatorname{tr}_A \Ket{0}\Bra{0} = \operatorname{tr}_A \Ket{1}\Bra{1}\)
+is a simplification. As noted previously, we require only probabilistic security from unconditionally
+secure quantum protocols. In most protocols, these density matrices are only approximately equal.
+In such case, it's possible to prove Alice has a cheating strategy that succeedes with high 
+probability. Details can be found in \cite{Lo96}.
+
+\section{Current areas of research}
 
 \section{Summary}
 
