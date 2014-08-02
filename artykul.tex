@@ -1,6 +1,7 @@
 \documentclass[10pt]{article}
 
 
+\usepackage{csagh}
 
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern} 
@@ -21,7 +22,6 @@
 \usepackage{polski}
 \usepackage[polish]{babel}
 
-\usepackage{csagh}
 
 \newtheorem{theorem}{Theorem}
 
@@ -32,10 +32,13 @@
 \author[AGH University of Science and Technology, los@student.agh.edu.pl]{Marcin Łoś}
 
 \begin{abstract}
-  W sumie nic takiego, parę artykułów pocytowane i tyle.
+  In this article problem of bit commitment, with particular attention to solutions based
+  on quantum mechanics, is explored. Some existing approaches are described and examined,
+  both quantum and classical. General impossibility theorem for bit commitment is discussed,
+  with sketch of the proof. Recent developments and their results are briefly summarized.
 \end{abstract}
 
-\keywords{quantum commitment}
+\keywords{bit commitment, quantum cryptography}
 
 \end{opening}
 
@@ -667,8 +670,8 @@ sustain bit commitment was growing exponentially.
 }
 
 This area of research seems presently to be quite active. New relativistic quantum bit commitment
-protocols \cite{Kent11}, based on new ideas (no-summoning theorem\footnotemark \cite{Mayers13}) 
-have been proposed recently. In particular, last year, one of the protocols \cite{Mayers12}, 
+protocols \cite{Kent11}, based on new ideas (no-summoning theorem\footnotemark \cite{Kent13}) 
+have been proposed recently. In particular, last year, one of the protocols \cite{Kent12}, 
 with particulary modest quantum resource requirements (nothing beyond the ability to send quantum
 states, and immediately carry out individual measurements is required), that has been proven 
 unconditionally secure, has been, apparently, successfully implemented \cite{Lunghi14}. It is the
