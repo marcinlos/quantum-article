@@ -246,7 +246,7 @@ Bob with \(r', 1-v\) instead of \(r, v\), thus changing her commitment.
 \footnote{Not to be confused with unconditional security of quantum protocols, discussed later.
 Such protocols also cannot exist, unfortunately, but the proof is quite different.}
 
-\subsection*{Protocol based on Graph Isomorphism Problem}
+\subsection{Protocol based on Graph Isomorphism Problem}
 
 Let \(G\) and \(H\) be isomorphic graphs, provided by Bob. Suppose Alice wants to commit to value 0
 or 1. To do this, she creates a graph \(F\) isomorphic to \(G\) if her choice is 0, and isomorphic 
@@ -280,7 +280,7 @@ This is one of the oldest and simplest proposed algorithms, presented as an ,,el
 in the original paper that actually defined the notion of commitment scheme \cite{Brassard88}, and 
 used it as a primitive to construct zero-knowledge protocols.
 
-\subsection*{Protocol based on Discrete Logarithm Problem}
+\subsection{Protocol based on Discrete Logarithm Problem}
 
 Let \(p\) be a prime number, \(\mathbb{F}_p=\mathbb{Z}/p\mathbb{Z}\). It is well-known that 
 \(\mathbb{F}_p\) is a field, and that multiplicative subgroup of a finite field is cyclic, hence it
@@ -305,7 +305,7 @@ determined, hence some care must be taken to avoid placing secret bit in this ra
 \cite{Brassard88} for details and references.
 }
 
-\subsection*{Protocol based on one-way permutation} 
+\subsection{Protocol based on one-way permutation} 
 
 Another protocol utlizes concept of one-way permutation. Intuitively, it is a easy to compute
 bijection \(\sigma\colon \{1\ldots n\}\rightarrow \{1\ldots n\}\), such that calculating the
@@ -464,7 +464,10 @@ successful attacks on algorithms previously considered secure have been publishe
 secure bit commitment by means of quantum mechanics was delt year later, when D. Mayers \cite{Mayers97}
 and H. Lo, H. F. Chau \cite{Lo98} have independently proven that no such scheme exists, generalizing
 and extending methods used to bring down BCJL. The result is widely believed to be true, occasional
-voices of disagreement (like \cite{Yuen01}) don't seem to impact the opinion of majority.
+voices of disagreement (like \cite{Yuen01}) don't seem to impact the opinion of majority. It has
+far-reaching consequences -- for example, it shows that no unconditionally secure oblivious transfer
+protocol can exists, since it could be used to implement unconditionally secure bit commitment
+\cite{Crepeau88}.
 
 \footnotetext{Although, admittedly, it was one of the last to succomb
 to insecurity proof -- while Lo and Chau exhibited vulnerabilities in simpler variants, Mayers in
@@ -586,7 +589,107 @@ probability. Details can be found in \cite{Lo96}.
 
 \section{Current areas of research}
 
+While the impossibility proof seems to rules out the possibility of creating unconditionally secure
+commitment protocol, it may still be possible to obtain protocols with good properties under some
+less restrictive assumptions. So, while the ultimate goal is impossible to achieve, quantum commitment
+protocols can still be a huge improvement over the classical solutions. This leads naturally to study
+of models with somehow limited adversaries \cite{Damgard05,Wehner08}. Another promising idea is an
+attempt to combine quantum mechanics with special relativity \cite{Kent12}.
+
+\subsection{BQSM}
+
+Bounded Quantum Storage Model (BQSM) is a restriction of the standard model with computationally
+omnipotent adverseries, in which the amout of \emph{quantum} data that can be stored is bounded by
+some fixed constant. No other limitations are imposed, in particular the size of classical storage
+is not impaired\footnotemark. 
+
+\footnotetext{
+Still, memory limitation has proven a reasonable approach in the classical setting as well. 
+Unconditionally secure oblivious transfer protocol has been found, although it was rather impractical, 
+and not quite satisfying, due to rather poor bounds on adversary's memory\cite{Cachin98}. Even worse,
+the bounds have been proven to be optimal \cite{Dziembowski04}.
+}
+
+As it turns out, in this model there exist unconditionally secure protocols for bit commitment, and
+oblivious transfer \cite{Damgard05}. Moreover, honest participants need no quantum memory at all. As
+stable quantum storate is currently still a major technical challenge, the protocol seems to be of real
+practical interest.
+
+Let \(b\) be the value of the bit Alice wishes to commit to, \(n\) be the security parameter,
+\(\mathcal{B}_1\) and \(\mathcal{B}_2\) be orthonormal bases as in the description of BCJL.
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Commitment phase}}
+Bob chooses random \(x, r\in\mathbb{F}_2^n\) \;
+Bob sends \(x_i\) in basis \(\mathcal{B}_{r_i}\) to Alice for each \(i\) \;
+Alice measures all the qubits in \(\mathcal{B}_b\), obains some \(x'\in\mathbb{F}_2^n\) \;
+\end{algorithm}
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Reveal phase}}
+Alice sends \(b\) and \(x'\) to Bob \;
+Bob verifies that \(x_i=x'_i\) for those \(i\) with \(x_i=b\)
+\end{algorithm}
+
+It's possible to prove that if the commiter cannot store at least \(n/2\) qubits until the beggining
+of reveal phase, the above protocol is perfectly hiding, and binding with arbitrarily high probability.
+
+
+\subsection{Noisy-storage model}
+
+Another commonly considered restriction, instead of bounding quantum storage size, is to introduce
+imperfection. While adversaries are allowed to store unlimited quantum data, the qubits are slightly
+distorted. As in the case of BQSM, this model exploits existing technological limitations to create
+practically implementable, provably safe protocols.
+
+In \cite{Wehner08} such unconditionally safe oblivious transfer protocol is introduced. While
+quantum bit commitment is not explicitly discussed, the result is of interest, since oblivious
+transfer can be used to implement secure bit commitment protocol.
+
+\subsection{Relativistic protocols}
+
+Probably the most promising direction of research as of today tries to overcome the limitations
+implied by the impossibility theorem by incorporating relativistic effects \cite{Kent99}. This way,
+additional constraints can be imposed on the communication between participants, so that the 
+aforementioned no-go theorem no longer applies.
+
+While Mayers \cite{Mayers97} does discuss the possibility of using relativistic constraints and argues 
+that his proof is applicable to this situation as well, his remarks were later found not to be entirely
+correct, as protocols invulnerable to his attack have been devised, even in the classical setting
+\cite{Kent99}. While the results of these efforts had significant practical limitations \footnotemark,
+more efficient protocols have since been developed \cite{Kent05} and adopted to the quantum setting.
+
+\footnotetext{
+In particular, in the first protocol, the amout of communication between parties necessary to
+sustain bit commitment was growing exponentially.
+}
+
+This area of research seems presently to be quite active. New relativistic quantum bit commitment
+protocols \cite{Kent11}, based on new ideas (no-summoning theorem\footnotemark \cite{Mayers13}) 
+have been proposed recently. In particular, last year, one of the protocols \cite{Mayers12}, 
+with particulary modest quantum resource requirements (nothing beyond the ability to send quantum
+states, and immediately carry out individual measurements is required), that has been proven 
+unconditionally secure, has been, apparently, successfully implemented \cite{Lunghi14}. It is the
+first published report of experimental implementation of secure relativistic quantum bit commitment 
+protocol.
+
+\footnotetext{
+Like no-cloning theorem, it expresses fundamental constraint on participats' capabilities. Alice
+transmits a quantum state to Bob, and then at some further point in spacetime, he is to send it
+back with arbitrarily short delay. It is shown that in Minkowski spacetime, it is impossible in
+general.
+}
+
 \section{Summary}
+
+Quantum bit commitment, while it certainly does not have as impressive track record as quantum key
+distribution, seems to have recovered quite well from the initial problems, like the Mayers'
+impossibility theorem. New directions of research are found and pursued, and although the wide
+adaptation of quantum bit commitment protocols still seems unlikely in the next few years, recent 
+results, like \cite{Lunghi14}, inspire confidence that sooner or later, it will most likely become
+a practical technology.
 
 \nocite{*}
 
