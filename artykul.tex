@@ -119,16 +119,22 @@ is a way for Alice to prove she knows the Hamiltonian cycle in certain graph, wi
 cycle. Detailed discussion and analysis can be found in the first section of \cite{CM:CryptoNotes}. 
 Let \(G\) be the graph. The protocol consists of following steps:
 
-\begin{enumerate}
-  \item Alice chooses some graph \(G'\) isomorphic to \(G\) and isomorphism \(\sigma\colon G\cong G'\)
-  \item Alice commits to her choice
-  \item Bob can now ask Alice for one of two things:
-    \begin{enumerate}
-      \item graph \(G'\) and isomorphism \(\sigma\)
-      \item image of Alice's hamiltonian cycle by \(\sigma\), i.e. hamiltonian cycle in \(G'\)
-    \end{enumerate}
-  \item Bob verifies the answer, depending on the question
-\end{enumerate}
+\vspace{2mm}
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Hamiltonian cycle zero-knowledge proof}}
+  Alice chooses some graph \(G'\) isomorphic to \(G\) and isomorphism \(\sigma\colon G\cong G'\) \;
+  Alice commits to her choice\;
+  Bob can now ask Alice for one of two things \;
+    \begin{itemize}
+      \item graph \(G'\) and isomorphism \(\sigma\) \;
+      \item image of Alice's hamiltonian cycle by \(\sigma\), i.e. hamiltonian cycle in \(G'\) \;
+    \end{itemize}
+  Bob verifies the answer, depending on the question \;
+\end{algorithm}
+
+\vspace{2mm}
 
 If Alice can consistently produce acceptable responses to Bob's questions, he can conclude with high
 probability that she has indeed found the hamiltonian cycle in \(G\). Otherwise, she would either fail
@@ -318,18 +324,25 @@ The protocol consists of the following steps:
 
 \footnotetext{This can be made precise. See \cite{Naor98} for details} 
 
-\begin{enumerate}
-  \item Alice and Bob choose one-way permutation \(\sigma\colon \mathbb{F}_2^n\rightarrow 
-    \mathbb{F}_2^n\)
-  \item Alice chooses random vector \(x\in\mathbb{F}_2^n\), and calculates \(y=\sigma(x)\)
-  \item Bob chooses \((n-1)\) linearly independent vectors \(h_i\in\mathbb{F}_2^n\), 
-    \(i=1,\ldots, n-1\)
-  \item Bob sends them to Alice, who computes \(c_i=\langle h_i, y\rangle\) and sends the results to Bob
-  \item Solutions to system of equations \(\langle h_i, X\rangle = c_i\) form one-dimensional
+\vspace{2mm}
+
+\NoCaptionOfAlgo
+\begin{algorithm}[H]
+\caption{\textbf{Commitment phase}}
+  Alice and Bob choose one-way permutation \(\sigma\colon \mathbb{F}_2^n\rightarrow 
+    \mathbb{F}_2^n\) \;
+  Alice chooses random vector \(x\in\mathbb{F}_2^n\), and calculates \(y=\sigma(x)\) \;
+  Bob chooses \((n-1)\) linearly independent vectors \(h_i\in\mathbb{F}_2^n\), 
+    \(i=1,\ldots, n-1\) \;
+  Bob sends them to Alice, who computes \(c_i=\langle h_i, y\rangle\) and sends to Bob \;
+  Solutions to system of equations \(\langle h_i, X\rangle = c_i\) form one-dimensional
     affine subspace of \(\mathbb{F}_2^n\), consisting of two elements, \(y_0\) and \(y_1\). Alice
-    and Bob compute these solutions.\footnotemark
-  \item Let \(c\) be such that \(y_c = y\). Alice sends to Bob \(d=b\oplus c\)
-\end{enumerate}
+    and Bob compute these solutions.\footnotemark \;
+  Let \(c\) be such that \(y_c = y\). Alice sends to Bob \(d=b\oplus c\) \;
+\end{algorithm}
+
+\vspace{2mm}
+
 
 Reveal phase consists of Alice sending \(b\) and \(x\) to Bob, who computes \(y=f(x)\) and verifies
 the data obtained previously from Alice.
@@ -414,6 +427,7 @@ the data he received correctly.
 Let \(\langle a,b\rangle\) denote standard inner product in \(\mathbb{F}_2^n\), and \(b\in\{0,1\}\) 
 be the value Alice wishes to commit to.
 
+\vspace{2mm}
 
 \NoCaptionOfAlgo
 \begin{algorithm}[H]
@@ -429,6 +443,8 @@ Alice chooses codeword \(c\in C\) such that \(\langle r,c\rangle = b\) \;
   Bob measures the qubit with respect to basis \(B'_i\), obtains result \(c'_i\) \;
 }
 \end{algorithm}
+\vspace{2mm}
+
 
 After the commitment phase, Bob has values \(c'_1,\ldots,c'_n\), roughly \(\frac{3}{4}\) of 
 which match Alice's \(c_1,\ldots,c_n\). Linear code \(C\) is choosen such that the amount of
@@ -436,6 +452,8 @@ information Bob possesses about actual value of \(c\) is negligible (exponential
 respect to \(n\)).
 
 Reveal phase is significantly simpler:
+
+\vspace{2mm}
 
 \NoCaptionOfAlgo
 \begin{algorithm}[H]
@@ -449,6 +467,7 @@ Bob calculates total amount of mismatches for all \(i\) such that \(B'_i=B_i\) \
   he rejects
 }
 \end{algorithm}
+\vspace{2mm}
 
 The original paper contains proofs that all the concievable attack strategies for both Alice
 and Bob have vanishingly small probability of success. This part, although not prohibitively
@@ -513,6 +532,8 @@ Both Alice and Bob know the states \(\left\{\Ket{\phi_i}_B\right\}\), \(\left\{\
 Let \(b\) be the bit Alice wishes to commit to. Commitment phase is carried out in the following
 way:
 
+\vspace{2mm}
+
 \NoCaptionOfAlgo
 \begin{algorithm}[H]
 \caption{\textbf{Commitment phase}}
@@ -521,12 +542,16 @@ Alice measures her part of the system, and obtains some value \(k\) \;
 Alice send to Bob his part of the system \;
 \end{algorithm}
 
+\vspace{2mm}
+
 \NoCaptionOfAlgo
 \begin{algorithm}[H]
 \caption{\textbf{Reveal phase}}
 Alice sends \(b\) and \(n\) to Bob \;
 Bob measures his qubits to verify the correlations implied by data from Alice \;
 \end{algorithm}
+
+\vspace{2mm}
 
 As it turns out, many proposed protocols can be described as special cases of this scheme 
 \cite{Lo96}. For example, in BJCL Bob measures qubits received from Alice immediately, but if we
@@ -621,6 +646,8 @@ practical interest.
 Let \(b\) be the value of the bit Alice wishes to commit to, \(n\) be the security parameter,
 \(\mathcal{B}_1\) and \(\mathcal{B}_2\) be orthonormal bases as in the description of BCJL.
 
+\vspace{2mm}
+
 \NoCaptionOfAlgo
 \begin{algorithm}[H]
 \caption{\textbf{Commitment phase}}
@@ -629,6 +656,8 @@ Bob sends \(x_i\) in basis \(\mathcal{B}_{r_i}\) to Alice for each \(i\) \;
 Alice measures all the qubits in \(\mathcal{B}_b\), obains some \(x'\in\mathbb{F}_2^n\) \;
 \end{algorithm}
 
+\vspace{2mm}
+
 \NoCaptionOfAlgo
 \begin{algorithm}[H]
 \caption{\textbf{Reveal phase}}
@@ -636,8 +665,12 @@ Alice sends \(b\) and \(x'\) to Bob \;
 Bob verifies that \(x_i=x'_i\) for those \(i\) with \(x_i=b\)
 \end{algorithm}
 
+\vspace{2mm}
+
 It's possible to prove that if the commiter cannot store at least \(n/2\) qubits until the beggining
 of reveal phase, the above protocol is perfectly hiding, and binding with arbitrarily high probability.
+The protocol itself seems rather simple simple, but, as usually, rigorous proof of  these properties
+is a bit involved.
 
 
 \subsection{Noisy-storage model}
